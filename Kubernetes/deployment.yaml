@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mynetflix
+  name: netflix-app
   labels:
-    app: mynetflix
+    app: netflix-app
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: mynetflix
+      app: netflix-app
   template:
     metadata:
       labels:
-        app: mynetflix
+        app: netflix-app
     spec:
       containers:
-      - name: mynetflix
-        image: ghcr.io/agus-3rd-yoga/mynetflix:latest
+      - name: netflix-app
+        image: ghcr.io/agus-3rd-yoga/netflix-app:latest
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 80
