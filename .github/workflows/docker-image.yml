@@ -14,61 +14,52 @@ jobs:
     name: Lint Dockerfile
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@master
-      - uses: hadolint/hadolint-action@master
+      - uses: actions/checkout@v4
+      - uses: hadolint/hadolint-action@v2
         with:
-          dockerfile: "Dockerfile"
-          #failure-threshold: error
-  build-and-push-image-to-Dockerhub-registry:
-    name: Building & pushing image to Docker Hub
-    needs: ["lint-dockerfile"]
+          dockerfile: Dockerfile
+
+  build-and-push-image-to-dockerhub:
+    name: Build & push image to Docker Hub
+    needs: lint-dockerfile
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
     steps:
-    - uses: actions/checkout@master
-    - uses: docker/login-action@master
-      with:
-        username: ${{ secrets.DOCKERHUB_USERNAME }}
-        password: ${{ secrets.DOCKERHUB_TOKEN }}
-    - uses: docker/build-push-action@master
-      with:
-        context: .
-        build-args: |
-          TMDB_V3_API_KEY=${{ secrets.TMDB_API_KEY }}
-        push: true
-        tags: ${{ secrets.DOCKERHUB_USERNAME }}/mynetflix:latest
-  build-and-push-image-to-Github-registry:
-    name: Pushing image to Github registry    
-    needs: ["lint-dockerfile"]
-    runs-on: ubuntu-latest    
+      - uses: actions/checkout@v4
+      - uses: docker/login-action@v5
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - uses: docker/build-push-action@v5
+        with:
+          context: .
+          build-args: |
+            TMDB_V3_API_KEY=${{ secrets.TMDB_API_KEY }}
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/mynetflix:latest
+
+  build-and-push-image-to-github-registry:
+    name: Push image to GitHub registry
+    needs: lint-dockerfile
+    runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
     steps:
-    - uses: actions/checkout@master
-      with:
-        ref: 'main'    
-    - uses: docker/login-action@master
-      with:
-        registry: ${{ env.REGISTRY }}
-        username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
-    #- name: Extract metadata (tags, labels) for Docker
-      #id: meta
-      #uses: docker/metadata-action@master
-      #with:
-        #images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}     
-    #- uses: docker/build-push-action@master
-      #with:
-        #context: .
-        #build-args: |
-          #TMDB_V3_API_KEY=${{ secrets.TMDB_API_KEY }}
-        #push: true
-        #tags: latest
-        #labels: ${{ steps.meta.outputs.labels }}
-    - name: 'Build Inventory Image'
-      run: |
-        docker build . --tag ${{ env.REGISTRY }}/${{ github.actor }}/${{ env.IMAGE_NAME }}:latest
-        docker push ${{ env.REGISTRY }}/${{ github.actor }}/${{ env.IMAGE_NAME }}:latest
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: docker/login-action@v5
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/build-push-action@v5
+        with:
+          context: .
+          build-args: |
+            TMDB_V3_API_KEY=${{ secrets.TMDB_API_KEY }}
+          push: true
+          tags: ${{ env.REGISTRY }}/${{ github.actor }}/${{ env.IMAGE_NAME }}:latest

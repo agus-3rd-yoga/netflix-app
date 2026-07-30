@@ -41,8 +41,8 @@ export function Component() {
       preload: "metadata",
       autoplay: true,
       controls: false,
-      // responsive: true,
-      // fluid: true,
+      responsive: true,
+      fluid: true,
       width: windowSize.width,
       height: windowSize.height,
       sources: [
@@ -54,7 +54,6 @@ export function Component() {
         },
       ],
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [windowSize]);
 
   const handlePlayerReady = function (player: Player): void {

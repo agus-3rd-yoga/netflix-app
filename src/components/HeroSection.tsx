@@ -37,40 +37,28 @@ export default function TopTrailer({ mediaType }: TopTrailerProps) {
   const playerRef = useRef<Player | null>(null);
   const isOffset = useOffSetTop(window.innerWidth * 0.5625);
   const { setDetailType } = useDetailModal();
-  const maturityRate = useMemo(() => {
-    return getRandomNumber(20);
-  }, []);
+  const maturityRate = useMemo(() => getRandomNumber(20), []);
 
   const handleReady = useCallback((player: Player) => {
     playerRef.current = player;
   }, []);
 
-  useEffect(() => {
-    if (playerRef.current) {
-      if (isOffset) {
-        playerRef.current.pause();
-      } else {
-        if (playerRef.current.paused()) {
-          playerRef.current.play();
-        }
-      }
-    }
-  }, [isOffset]);
+  const availableVideos = useMemo(
+    () => data?.results?.filter((item) => !!item.backdrop_path) ?? [],
+    [data]
+  );
 
   useEffect(() => {
-    if (data && data.results) {
-      const videos = data.results.filter((item) => !!item.backdrop_path);
-      setVideo(videos[getRandomNumber(videos.length)]);
+    if (availableVideos.length > 0) {
+      setVideo(availableVideos[getRandomNumber(availableVideos.length)]);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data]);
+  }, [availableVideos]);
 
   useEffect(() => {
     if (video) {
       getVideoDetail({ mediaType, id: video.id });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [video]);
+  }, [getVideoDetail, mediaType, video]);
 
   const handleMute = useCallback((status: boolean) => {
     if (playerRef.current) {

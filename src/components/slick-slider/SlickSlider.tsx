@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useMemo } from "react";
 import Slider, { Settings } from "react-slick";
 import { motion } from "framer-motion";
 
@@ -72,14 +72,17 @@ export default function SlickSlider({ data, genre }: SlickSliderProps) {
   const [showExplore, setShowExplore] = useState(false);
   const [isEnd, setIsEnd] = useState(false);
   const theme = useTheme();
+  const filteredResults = useMemo(
+    () => data.results.filter((item) => !!item.backdrop_path),
+    [data.results]
+  );
 
-  const beforeChange = async (currentIndex: number, nextIndex: number) => {
-    if (currentIndex < nextIndex) {
-      setActiveSlideIndex(nextIndex);
-    } else if (currentIndex > nextIndex) {
-      setIsEnd(false);
-    }
+  const beforeChange = (currentIndex: number, nextIndex: number) => {
     setActiveSlideIndex(nextIndex);
+  };
+
+  const afterChange = (currentIndex: number) => {
+    setIsEnd(currentIndex >= filteredResults.length - (settings.slidesToShow ?? 6));
   };
 
   const settings: Settings = {
@@ -89,13 +92,8 @@ export default function SlickSlider({ data, genre }: SlickSliderProps) {
     lazyLoad: "ondemand",
     slidesToShow: 6,
     slidesToScroll: 6,
-    // afterChange: (current) => {
-    //   console.log("After Change", current);
-    // },
     beforeChange,
-    // onEdge: (direction) => {
-    //   console.log("Edge: ", direction);
-    // },
+    afterChange,
     responsive: [
       {
         breakpoint: 1536,
@@ -191,11 +189,9 @@ export default function SlickSlider({ data, genre }: SlickSliderProps) {
                 padding={ARROW_MAX_WIDTH}
                 theme={theme}
               >
-                {data.results
-                  .filter((i) => !!i.backdrop_path)
-                  .map((item) => (
-                    <SlideItem key={item.id} item={item} />
-                  ))}
+                {filteredResults.map((item) => (
+                  <SlideItem key={item.id} item={item} />
+                ))}
               </StyledSlider>
             </CustomNavigation>
           </RootStyle>

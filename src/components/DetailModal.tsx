@@ -30,7 +30,7 @@ import VideoJSPlayer from "./watch/VideoJSPlayer";
 
 const Transition = forwardRef(function Transition(
   props: TransitionProps & {
-    children: React.ReactElement<any, any>;
+    children: React.ReactNode;
   },
   ref: React.Ref<unknown>
 ) {
