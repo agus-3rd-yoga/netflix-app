@@ -1,6 +1,5 @@
 {
   "name": "netflix-clone-using-react-typescript-mui",
-  "packageManager": "yarn@4.5.0",
   "version": "0.1.1",
   "type": "module",
   "private": true,
