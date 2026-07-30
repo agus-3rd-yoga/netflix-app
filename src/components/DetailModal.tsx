@@ -28,9 +28,19 @@ import { useGetSimilarVideosQuery } from "src/store/slices/discover";
 import { MEDIA_TYPE } from "src/types/Common";
 import VideoJSPlayer from "./watch/VideoJSPlayer";
 
+//const Transition = forwardRef(function Transition(
+//  props: TransitionProps & {
+//    children: React.ReactNode;
+//  },
+//  ref: React.Ref<unknown>
+//) {
+//  return <Slide direction="up" ref={ref} {...props} />;
+//});
+
 const Transition = forwardRef(function Transition(
   props: TransitionProps & {
-    children: React.ReactNode;
+    // Slide / Transition expects a ReactElement
+    children: React.ReactElement | null;
   },
   ref: React.Ref<unknown>
 ) {
