@@ -26,7 +26,7 @@ WORKDIR /app
 COPY package.json yarn.lock ./
 
 # Install all dependencies (including devDependencies required for Vite/TSC)
-RUN yarn install --frozen-lockfile --prefer-offline
+RUN yarn install --immutable
 
 # Copy application source code
 COPY . .
